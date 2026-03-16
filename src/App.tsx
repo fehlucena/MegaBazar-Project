@@ -20,6 +20,30 @@ import { motion } from 'framer-motion';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const [loginError, setLoginError] = React.useState('');
+
+  const handleAnonymousLogin = async () => {
+    try {
+      setLoginError('');
+      await signInWithoutGoogle();
+    } catch (error: any) {
+      if (error.code === 'auth/operation-not-allowed') {
+        setLoginError('O login anônimo não está ativado no Firebase. Ative-o no console do Firebase (Authentication > Sign-in method).');
+      } else {
+        setLoginError('Erro ao fazer login: ' + error.message);
+      }
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      setLoginError('');
+      await signInWithGoogle();
+    } catch (error: any) {
+      setLoginError('Erro ao fazer login com Google: ' + error.message);
+    }
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-zinc-50 text-zinc-500">Carregando...</div>;
   if (!user) {
     return (
@@ -39,9 +63,15 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
             Para sincronizar seus turnos automaticamente com o Google Agenda, faça login com o Google. Se preferir, você pode continuar sem fazer login.
           </p>
           
+          {loginError && (
+            <div className="mb-6 p-4 bg-red-50 text-red-700 text-sm rounded-xl border border-red-100 text-left">
+              {loginError}
+            </div>
+          )}
+
           <div className="space-y-3">
             <button 
-              onClick={signInWithGoogle}
+              onClick={handleGoogleLogin}
               className="w-full flex items-center justify-center gap-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-800 font-medium py-3 px-6 rounded-xl transition-all"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -63,7 +93,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
             </div>
 
             <button 
-              onClick={signInWithoutGoogle}
+              onClick={handleAnonymousLogin}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition-all shadow-sm"
             >
               Continuar sem Google
