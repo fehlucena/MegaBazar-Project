@@ -7,7 +7,8 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-googleProvider.addScope('https://www.googleapis.com/auth/calendar.events');
+// Removido o escopo do Google Calendar para evitar a tela de "App não verificado"
+// googleProvider.addScope('https://www.googleapis.com/auth/calendar.events');
 
 export const signInWithGoogle = async () => {
   try {

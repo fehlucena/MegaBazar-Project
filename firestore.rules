@@ -36,10 +36,10 @@ service cloud.firestore {
     }
 
     function isValidRegistration(data) {
-      return data.keys().hasAll(['userId', 'name', 'email', 'createdAt', 'updatedAt']) &&
+      return data.keys().hasAll(['userId', 'name', 'createdAt', 'updatedAt']) &&
              data.userId is string &&
              data.name is string &&
-             data.email is string &&
+             (!('email' in data) || data.email is string || data.email == null) &&
              data.createdAt is timestamp &&
              data.updatedAt is timestamp;
     }

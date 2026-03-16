@@ -134,173 +134,172 @@ export default function Escala() {
     });
   };
 
-  if (loading) return null;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#F0EFEA] text-[#1A1A1A] font-black uppercase tracking-widest">Carregando...</div>;
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-6 flex flex-col items-center py-12 font-sans text-zinc-900">
+    <div className="min-h-screen bg-[#F0EFEA] p-3 md:p-6 flex flex-col items-center font-sans text-[#1A1A1A]">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white p-8 md:p-12 rounded-[2rem] shadow-sm border border-zinc-100 max-w-4xl w-full"
+        className="w-full max-w-3xl space-y-4 md:space-y-6 my-4 md:my-8"
       >
-        <div className="mb-8">
-          <span className="inline-block bg-indigo-50 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide uppercase mb-4">
+        {/* Header Card */}
+        <div className="bg-white p-6 md:p-8 border-2 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] border-t-8 border-t-[#E85D22]">
+          <span className="inline-block bg-[#1A1A1A] text-white px-3 py-1 text-xs md:text-sm font-mono tracking-widest uppercase mb-4 md:mb-6">
             Escala
           </span>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-zinc-900">
+          <h1 className="text-3xl md:text-5xl font-black tracking-tighter mb-4 text-[#1A1A1A] leading-none">
             Escala Mega Bazar
           </h1>
+          <div className="space-y-4 text-base md:text-lg font-medium text-[#1A1A1A]/80 leading-relaxed mt-6">
+            <p>
+              Este tópico é específico para os dias de evento. Aqui, formamos o nosso "time" que atuará no momento em que tudo estiver acontecendo.
+            </p>
+            <p>
+              Para facilitar esse processo, nossa escala é construída por meio de <strong className="text-[#1A1A1A]">SETORES</strong>. Além disso, separamos os horários em 2 turnos, garantindo que não haja sobrecarga para nenhum voluntário.
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-6 text-zinc-600 leading-relaxed mb-10 bg-zinc-50 p-6 rounded-3xl border border-zinc-100">
-          <p>
-            Este tópico é específico para os dias de evento. Aqui, formamos o nosso "time" que atuará no momento em que tudo estiver acontecendo.
-          </p>
-          <p>
-            Para facilitar esse processo, nossa escala é construída por meio de <strong>SETORES</strong>. Além disso, separamos os horários em 2 turnos, garantindo que não haja sobrecarga para nenhum voluntário.
-          </p>
-        </div>
-
-        <div className="space-y-12">
-          {/* Weekends */}
-          {WEEKEND_DAYS.map(date => (
-            <motion.div 
-              key={date} 
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="border border-zinc-200 rounded-3xl p-6 md:p-8 bg-white shadow-sm"
-            >
-              <h2 className="text-2xl font-bold mb-2 text-zinc-800">{date}</h2>
-              <p className="text-zinc-500 mb-6 text-sm">
-                Chegada voluntários: {date.includes('domingo') ? '8h' : '9h'} | Início do evento: {date.includes('domingo') ? '9h' : '10h'}
-              </p>
-
-              <label className={`flex items-center mb-6 p-4 rounded-2xl cursor-pointer transition-all border-2 ${
-                notParticipating.includes(date) ? 'border-indigo-500 bg-indigo-50/30' : 'border-zinc-200 bg-zinc-50 hover:border-indigo-200'
-              }`}>
-                <input
-                  type="checkbox"
-                  checked={notParticipating.includes(date)}
-                  onChange={() => toggleNotParticipating(date)}
-                  className="w-5 h-5 text-indigo-600 border-zinc-300 rounded focus:ring-indigo-500"
-                />
-                <span className="ml-4 font-medium text-zinc-800">Não poderei comparecer neste dia</span>
-              </label>
-
-              <AnimatePresence>
-                {!notParticipating.includes(date) && (
-                  <motion.div 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="space-y-8 overflow-hidden"
-                  >
-                    {SHIFTS.map(shift => (
-                      <div key={shift}>
-                        <h3 className="text-sm font-semibold mb-4 text-indigo-700 bg-indigo-50 inline-block px-4 py-1.5 rounded-full uppercase tracking-wide">{shift}</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {SECTORS.map(sector => {
-                            const full = isSlotFull(date, shift, sector);
-                            const selected = isSelected(date, shift, sector);
-                            const count = getSlotCount(date, shift, sector);
-                            
-                            return (
-                              <button
-                                key={sector}
-                                onClick={() => toggleSlot(date, shift, sector)}
-                                disabled={full && !selected}
-                                className={`flex justify-between items-center p-4 rounded-2xl border-2 text-left transition-all ${
-                                  selected 
-                                    ? 'border-indigo-500 bg-indigo-50/50 shadow-sm' 
-                                    : full 
-                                      ? 'border-zinc-200 bg-zinc-100 opacity-60 cursor-not-allowed'
-                                      : 'border-zinc-200 hover:border-indigo-300 bg-white'
-                                }`}
-                              >
-                                <span className={`font-medium ${selected ? 'text-indigo-900' : 'text-zinc-700'}`}>{sector}</span>
-                                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                                  selected ? 'bg-indigo-100 text-indigo-700' : full ? 'bg-zinc-200 text-zinc-500' : 'bg-zinc-100 text-zinc-600'
-                                }`}>
-                                  {full && !selected ? 'Esgotado' : `${count + (selected ? 1 : 0)}/${limits[sector] || 2}`}
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
-
-          {/* Weekdays */}
+        {/* Weekends */}
+        {WEEKEND_DAYS.map(date => (
           <motion.div 
+            key={date} 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="border border-zinc-200 rounded-3xl p-6 md:p-8 bg-white shadow-sm"
+            className="bg-white p-6 md:p-8 border-2 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[8px_8px_0px_0px_rgba(26,26,26,1)]"
           >
-            <h2 className="text-2xl font-bold mb-2 text-zinc-800">Dias de Semana (13 a 17/04)</h2>
-            <p className="text-zinc-500 mb-8 text-sm">Precisamos de, no mínimo, 2 voluntários por dia. Não há restrição de vagas.</p>
-            
-            <div className="space-y-6">
-              {WEEKDAY_DAYS.map(date => (
-                <div key={date} className="bg-zinc-50 p-6 rounded-2xl border border-zinc-100">
-                  <h3 className="text-lg font-semibold mb-4 text-zinc-800">{date}</h3>
-                  
-                  <label className={`flex items-center mb-4 p-4 rounded-2xl cursor-pointer transition-all border-2 ${
-                    notParticipating.includes(date) ? 'border-indigo-500 bg-indigo-50/30' : 'border-zinc-200 bg-white hover:border-indigo-200'
-                  }`}>
-                    <input
-                      type="checkbox"
-                      checked={notParticipating.includes(date)}
-                      onChange={() => toggleNotParticipating(date)}
-                      className="w-5 h-5 text-indigo-600 border-zinc-300 rounded focus:ring-indigo-500"
-                    />
-                    <span className="ml-4 font-medium text-zinc-800">Não poderei comparecer</span>
-                  </label>
+            <h2 className="text-2xl md:text-3xl font-black mb-2 text-[#1A1A1A] uppercase tracking-wide">{date}</h2>
+            <p className="text-[#E85D22] font-mono text-xs md:text-sm mb-6 md:mb-8">
+              Chegada voluntários: {date.includes('domingo') ? '8h' : '9h'} | Início do evento: {date.includes('domingo') ? '9h' : '10h'}
+            </p>
 
-                  <AnimatePresence>
-                    {!notParticipating.includes(date) && (
-                      <motion.button
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        onClick={() => toggleSlot(date, WEEKDAY_SHIFT, 'Geral')}
-                        className={`w-full flex justify-between items-center p-4 rounded-2xl border-2 text-left transition-all overflow-hidden ${
-                          isSelected(date, WEEKDAY_SHIFT, 'Geral')
-                            ? 'border-indigo-500 bg-indigo-50/50 shadow-sm' 
-                            : 'border-zinc-200 bg-white hover:border-indigo-300'
-                        }`}
-                      >
-                        <span className={`font-medium ${isSelected(date, WEEKDAY_SHIFT, 'Geral') ? 'text-indigo-900' : 'text-zinc-700'}`}>{WEEKDAY_SHIFT}</span>
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                          isSelected(date, WEEKDAY_SHIFT, 'Geral') ? 'bg-indigo-100 text-indigo-700' : 'bg-zinc-100 text-zinc-600'
-                        }`}>
-                          {isSelected(date, WEEKDAY_SHIFT, 'Geral') ? 'Selecionado' : 'Selecionar'}
-                        </span>
-                      </motion.button>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
-            </div>
+            <label className={`flex items-center mb-6 md:mb-8 p-4 md:p-5 cursor-pointer transition-all border-2 ${
+              notParticipating.includes(date) ? 'border-[#E85D22] bg-[#E85D22]/10 shadow-[2px_2px_0px_0px_#E85D22] md:shadow-[4px_4px_0px_0px_#E85D22]' : 'border-[#1A1A1A] bg-white hover:bg-[#F0EFEA] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] md:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]'
+            }`}>
+              <input
+                type="checkbox"
+                checked={notParticipating.includes(date)}
+                onChange={() => toggleNotParticipating(date)}
+                className="w-5 h-5 md:w-6 md:h-6 text-[#E85D22] border-2 border-[#1A1A1A] rounded-none focus:ring-[#E85D22] focus:ring-offset-0"
+              />
+              <span className="ml-3 md:ml-4 font-bold text-base md:text-lg text-[#1A1A1A]">Não poderei comparecer neste dia</span>
+            </label>
+
+            <AnimatePresence>
+              {!notParticipating.includes(date) && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-8 md:space-y-10 overflow-hidden"
+                >
+                  {SHIFTS.map(shift => (
+                    <div key={shift}>
+                      <h3 className="text-xs md:text-sm font-black mb-3 md:mb-4 text-[#1A1A1A] bg-[#F0EFEA] inline-block px-3 py-1 md:px-4 md:py-2 uppercase tracking-widest border-2 border-[#1A1A1A]">{shift}</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                        {SECTORS.map(sector => {
+                          const full = isSlotFull(date, shift, sector);
+                          const selected = isSelected(date, shift, sector);
+                          const count = getSlotCount(date, shift, sector);
+                          
+                          return (
+                            <button
+                              key={sector}
+                              onClick={() => toggleSlot(date, shift, sector)}
+                              disabled={full && !selected}
+                              className={`flex justify-between items-center p-3 md:p-4 border-2 text-left transition-all ${
+                                selected 
+                                  ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-[2px_2px_0px_0px_#E85D22] md:shadow-[4px_4px_0px_0px_#E85D22]' 
+                                  : full 
+                                    ? 'border-[#1A1A1A]/20 bg-[#F0EFEA] opacity-60 cursor-not-allowed text-[#1A1A1A]/50'
+                                    : 'border-[#1A1A1A] bg-white hover:bg-[#F0EFEA] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] md:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] text-[#1A1A1A]'
+                              }`}
+                            >
+                              <span className="font-bold text-sm md:text-base">{sector}</span>
+                              <span className={`text-[10px] md:text-xs px-2 py-1 md:px-3 md:py-1 font-mono font-bold border-2 ${
+                                selected ? 'bg-white text-[#1A1A1A] border-[#1A1A1A]' : full ? 'bg-transparent border-[#1A1A1A]/20' : 'bg-[#F0EFEA] border-[#1A1A1A]'
+                              }`}>
+                                {full && !selected ? 'ESGOTADO' : `${count + (selected ? 1 : 0)}/${limits[sector] || 2}`}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
-        </div>
+        ))}
 
-        <div className="flex gap-4 mt-12">
+        {/* Weekdays */}
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-white p-6 md:p-8 border-2 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[8px_8px_0px_0px_rgba(26,26,26,1)]"
+        >
+          <h2 className="text-2xl md:text-3xl font-black mb-2 text-[#1A1A1A] uppercase tracking-wide">Dias de Semana (13 a 17/04)</h2>
+          <p className="text-[#E85D22] font-mono text-xs md:text-sm mb-6 md:mb-8">Precisamos de, no mínimo, 2 voluntários por dia. Não há restrição de vagas.</p>
+          
+          <div className="space-y-6 md:space-y-8">
+            {WEEKDAY_DAYS.map(date => (
+              <div key={date} className="bg-[#F0EFEA] p-4 md:p-6 border-2 border-[#1A1A1A]">
+                <h3 className="text-lg md:text-xl font-black mb-4 md:mb-6 text-[#1A1A1A] uppercase tracking-wide">{date}</h3>
+                
+                <label className={`flex items-center mb-4 md:mb-6 p-4 md:p-5 cursor-pointer transition-all border-2 ${
+                  notParticipating.includes(date) ? 'border-[#E85D22] bg-[#E85D22]/10 shadow-[2px_2px_0px_0px_#E85D22] md:shadow-[4px_4px_0px_0px_#E85D22]' : 'border-[#1A1A1A] bg-white hover:bg-[#F0EFEA] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] md:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={notParticipating.includes(date)}
+                    onChange={() => toggleNotParticipating(date)}
+                    className="w-5 h-5 md:w-6 md:h-6 text-[#E85D22] border-2 border-[#1A1A1A] rounded-none focus:ring-[#E85D22] focus:ring-offset-0"
+                  />
+                  <span className="ml-3 md:ml-4 font-bold text-base md:text-lg text-[#1A1A1A]">Não poderei comparecer</span>
+                </label>
+
+                <AnimatePresence>
+                  {!notParticipating.includes(date) && (
+                    <motion.button
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      onClick={() => toggleSlot(date, WEEKDAY_SHIFT, 'Geral')}
+                      className={`w-full flex justify-between items-center p-4 md:p-5 border-2 text-left transition-all overflow-hidden ${
+                        isSelected(date, WEEKDAY_SHIFT, 'Geral')
+                          ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-[2px_2px_0px_0px_#E85D22] md:shadow-[4px_4px_0px_0px_#E85D22]' 
+                          : 'border-[#1A1A1A] bg-white hover:bg-[#F0EFEA] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] md:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] text-[#1A1A1A]'
+                      }`}
+                    >
+                      <span className="font-bold text-base md:text-lg">{WEEKDAY_SHIFT}</span>
+                      <span className={`text-[10px] md:text-xs px-2 py-1 md:px-3 md:py-1 font-mono font-bold border-2 uppercase ${
+                        isSelected(date, WEEKDAY_SHIFT, 'Geral') ? 'bg-white text-[#1A1A1A] border-[#1A1A1A]' : 'bg-[#F0EFEA] border-[#1A1A1A]'
+                      }`}>
+                        {isSelected(date, WEEKDAY_SHIFT, 'Geral') ? 'Selecionado' : 'Selecionar'}
+                      </span>
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Navigation */}
+        <div className="flex flex-row gap-3 md:gap-4 pt-4">
           <button
             onClick={() => navigate('/etapa4')}
-            className="w-1/3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-medium py-4 px-6 rounded-2xl transition-all text-lg"
+            className="flex-1 bg-white border-2 border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] font-black uppercase tracking-widest py-3 md:py-4 px-2 md:px-6 transition-all text-xs md:text-base text-center"
           >
             Voltar
           </button>
           <button
             onClick={handleNext}
-            className="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-4 px-6 rounded-2xl transition-all shadow-sm text-lg"
+            className="flex-[2] bg-[#E85D22] hover:bg-[#d14e18] text-white font-black uppercase tracking-widest py-3 md:py-4 px-2 md:px-6 transition-all text-xs md:text-base border-2 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] text-center"
           >
             Finalizar
           </button>
